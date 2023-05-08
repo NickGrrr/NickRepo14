@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add new user</title>
+</head>
+<div>
+    <th:block th:include="logoutButton">LOGOUT</th:block>
+</div>
+<body>
+<h1>User info</h1>
+<form th:action="@{/admin/saveUser}" th:object="${user}" th:method="post">
+    <p><input type="hidden" th:field="*{id}"/></p>
+    <p>Name: <input type="text" th:field="*{name}"/></p>
+    <p>Job: <input type="text" th:field="*{job}"/></p>
+    <p>Age: <input type="number" th:field="*{age}"/></p>
+    <p>Salary: <input type="number" th:field="*{salary}"/></p>
+    <p>Password: <input type="text" th:field="*{password}"/></p>
+    <p><input type="submit" value="Submit"></p>
+</form>
+
+</body>
+</html>
