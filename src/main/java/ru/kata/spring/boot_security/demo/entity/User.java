@@ -1,10 +1,24 @@
 package ru.kata.spring.boot_security.demo.entity;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;
@@ -15,37 +29,40 @@ import java.util.Set;
 public class User implements UserDetails, Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-    @Column(name = "username", unique = true)
-    private String username;
-    @Column(name = "password")
-    private String password;
-    @Column(name = "job")
-    private String job;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "firstname")
+    private String firstname;
+    @Column(name = "lastname")
+    private String lastname;
     @Column(name = "age")
     private int age;
-    @Column(name = "salary")
-    private int salary;
-
-    @ManyToMany(fetch = FetchType.LAZY)
+    @Column(name = "email", unique = true)
+    private String email;
+    @Column(name = "password")
+    private String password;
+    @ManyToMany(cascade = CascadeType.MERGE , fetch = FetchType.LAZY)
+    @Fetch(FetchMode.JOIN)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
     private Set<Role> roles;
 
 
     public User() {
     }
 
-    public User(String username, String password, String job, int age, int salary) {
-        this.username = username;
-        this.password = password;
-        this.job = job;
+    public User(String firstname, String lastname, int age, String email, String password, Set<Role> roles) {
+        this.firstname = firstname;
+        this.lastname = lastname;
         this.age = age;
-        this.salary = salary;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public Set<Role> getRoles() {
         return roles;
@@ -66,7 +83,7 @@ public class User implements UserDetails, Serializable {
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
     @Override
@@ -93,28 +110,38 @@ public class User implements UserDetails, Serializable {
         this.password = password;
     }
 
-    public String getName() {
-        return username;
-    }
 
-    public int getId() {
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public void setName(String username) {
-        this.username = username;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public String getJob() {
-        return job;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
     }
 
-    public void setJob(String job) {
-        this.job = job;
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public int getAge() {
@@ -125,24 +152,16 @@ public class User implements UserDetails, Serializable {
         this.age = age;
     }
 
-    public int getSalary() {
-        return salary;
-    }
-
-    public void setSalary(int salary) {
-        this.salary = salary;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return age == user.age && salary == user.salary && Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(job, user.job);
+        return age == user.age && Objects.equals(firstname, user.firstname) && Objects.equals(lastname, user.lastname) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, job, age, salary);
+        return Objects.hash(id, firstname, lastname, age, email, password, roles);
     }
 }

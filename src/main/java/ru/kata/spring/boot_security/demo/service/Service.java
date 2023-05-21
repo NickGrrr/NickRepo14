@@ -7,13 +7,25 @@ import ru.kata.spring.boot_security.demo.entity.User;
 import java.util.List;
 
 public interface Service {
-    void deleteUser(Integer id);
+    List<Role> getAllRoles();
+
+    Role getRole(String userRole);
+
+    Role getRoleById(Long id);
+
+    void addRole(Role role);
+
     void saveUser(User user);
-    User getUser(Integer id);
-    public User findUserByName(String username);
-    public List<User> getAllUsers();
-//    public User findUserByName(String username);
-    public List<Role> getAllRoles();
-    public Role getRole(Integer id);
-    public Role findRoleByName(String username);
+
+
+
+    void deleteUser(long id);
+
+    List<User> getAllUsers();
+
+    User findUserByEmail(String email);
+
+    User getUser(long id);
+
 }
+

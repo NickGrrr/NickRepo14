@@ -1,7 +1,0 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" html lang="en" xmlns:th="http://www.thymeleaf.org">
-<div>
-<form th:if="${#request.userPrincipal != null}" th:action="@{/logout}">
-  <button type="submit">LOGOUT</button>
-</form>
-</div>

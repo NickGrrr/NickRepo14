@@ -1,67 +1,50 @@
 package ru.kata.spring.boot_security.demo.entity;
 import org.springframework.security.core.GrantedAuthority;
-
-import javax.persistence.*;
-
-import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.Set;
 
 @Entity
 @Table(name = "roles")
-public class Role implements GrantedAuthority {
+public class Role implements GrantedAuthority, Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
-    @Column(name = "role")
-    private String role;
+    @Column(name = "role", unique = true)
+    private String userRole;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "roles")
     private Set<User> users;
-
-
 
     public Role() {
     }
 
-    public Role(Integer id, String role) {
-        this.id = id;
-        this.role = role;
+    public Role(String userRole) {
+        this.userRole = userRole;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Role role1 = (Role) o;
-        return id == role1.id && Objects.equals(role, role1.role);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, role);
-    }
-
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getRole() {
-        return role;
+    public String getUserRole() {
+        return userRole;
     }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    @Override
-    public String getAuthority() {
-        return getRole();
+    public void setUserRole(String role) {
+        this.userRole = role;
     }
 
     public Set<User> getUsers() {
@@ -73,9 +56,14 @@ public class Role implements GrantedAuthority {
     }
 
     @Override
+    public String getAuthority() {
+        return userRole;
+    }
+
+    @Override
     public String toString() {
-        return "Role{" +
-                "role='" + role + '\'' +
-                '}';
+
+        return  userRole.replace("ROLE_","");
     }
 }
+

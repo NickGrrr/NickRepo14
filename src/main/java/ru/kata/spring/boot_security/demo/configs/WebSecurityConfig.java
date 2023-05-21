@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import ru.kata.spring.boot_security.demo.service.ServiceImpl;
 
 @Configuration
@@ -23,21 +24,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         this.successUserHandler = successUserHandler;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                .antMatchers("/index").permitAll()
-                .antMatchers("/user/**").hasRole("USER")
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-                .and()
-                .formLogin().successHandler(successUserHandler)
-                .permitAll()
-                .and()
-                .logout()
-                .permitAll();
-    }
+@Override
+protected void configure(HttpSecurity http) throws Exception {
+    http.formLogin()
+            .successHandler(successUserHandler)
+            .usernameParameter("email")
+            .passwordParameter("password")
+            .permitAll();
+
+    http.logout()
+            .permitAll()
+            .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+            .logoutSuccessUrl("/login")
+            .and().csrf().disable();
+
+    http
+            .authorizeRequests()
+            .antMatchers("/login").permitAll()
+            .antMatchers("/user/**").hasAnyRole("ADMIN","USER")
+            .antMatchers("/admin/**").hasRole("ADMIN")
+            .anyRequest().authenticated();
+}
 
     @Bean
     public PasswordEncoder passwordEncoder() {

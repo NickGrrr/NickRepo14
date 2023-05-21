@@ -1,13 +1,14 @@
 package ru.kata.spring.boot_security.demo.dao;
 
+
+
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.entity.Role;
-import ru.kata.spring.boot_security.demo.entity.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.util.List;
+
 @Repository
 public class RoleDAOImpl implements RoleDAO {
 
@@ -16,16 +17,25 @@ public class RoleDAOImpl implements RoleDAO {
 
     @Override
     public List<Role> getAllRoles() {
-        return entityManager.createQuery("from Role", Role.class).getResultList();
+        return entityManager.createQuery("select r from Role r", Role.class).getResultList();
     }
 
     @Override
-    public Role getRole(int id) {
+    public Role getRole(String userRole) {
+        return entityManager.createQuery("select r from Role r where r.userRole =: userRole", Role.class)
+                .setParameter("userRole", userRole).getSingleResult();
+    }
+
+    @Override
+    public Role getRoleById(Long id) {
         return entityManager.find(Role.class, id);
     }
 
     @Override
-    public Role findRoleByName(String name) {
-        return entityManager.find(Role.class, name);
+    public void addRole(Role role) {
+        entityManager.persist(role);
     }
 }
+
+
+
