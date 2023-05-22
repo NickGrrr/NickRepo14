@@ -7,6 +7,7 @@ import ru.kata.spring.boot_security.demo.entity.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.List;
 
 @Repository
@@ -23,8 +24,11 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public void deleteUser(long id) {
-        User someUser = entityManager.find(User.class, id);
-        entityManager.remove(someUser);
+
+        Query query = entityManager.createQuery("delete from User where id =:userId");
+        query.setParameter("userId", id);
+        query.executeUpdate();
+
     }
 
     @Override

@@ -27,18 +27,17 @@ import java.util.List;
 
 @Service
 @Transactional
-public class ServiceImpl implements ru.kata.spring.boot_security.demo.service.Service, UserDetailsService{
+public class UserServiceImpl implements UserService, UserDetailsService{
 
-    private final RoleDAO roleDao;
+
     private final UserDAO userDao;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     @Lazy
-    public ServiceImpl(UserDAO userDao, PasswordEncoder passwordEncoder, RoleDAO roleDao) {
+    public UserServiceImpl(UserDAO userDao, PasswordEncoder passwordEncoder, RoleDAO roleDao) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
-        this.roleDao = roleDao;
     }
 
     @Override
@@ -76,26 +75,7 @@ public class ServiceImpl implements ru.kata.spring.boot_security.demo.service.Se
     }
 
 
-    @Override
-    public List<Role> getAllRoles() {
-        return roleDao.getAllRoles();
-    }
 
-    @Override
-    public Role getRole(String userRole) {
-        return roleDao.getRole(userRole);
-    }
-
-    @Override
-    public Role getRoleById(Long id) {
-        return roleDao.getRoleById(id);
-    }
-
-    @Override
-    @Transactional
-    public void addRole(Role role) {
-        roleDao.addRole(role);
-    }
 
 
 
